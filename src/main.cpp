@@ -2,9 +2,11 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <thread>
+#include <chrono>
 #include "CellMatrix.h"
 using namespace std;
-
+// using namespace std::chrono_literals;
 int main() {
     // matrix indexing is [y][x]
     int matrix_size = 10;
@@ -24,33 +26,31 @@ int main() {
     test.set(1,0,1,true);
 
     matrix[0][1] = true;
-    for (auto vec : matrix) {
-        for (auto i : vec) {
-            std::cout << i << " ";
-        }
-        std::cout << "\n";
-    }
+    // for (auto vec : matrix) {
+    //     for (auto i : vec) {
+    //         std::cout << i << " ";
+    //     }
+    //     std::cout << "\n";
+    // }
 
     InitWindow(1080,920,"Cellular automaton");
-
+    Vector3 origin {0,0,0};
     Camera3D camera = { 0 };
     camera.position = (Vector3) {
         10.0f, 10.0f, 20.0f
     };  // Camera position
-    camera.target = (Vector3) {
-        0.0f, 0.0f, 0.0f
-    };      // Camera looking at point
+    camera.target = origin;    // Camera looking at point
     camera.up = (Vector3) {
         0.0f, 1.0f, 0.0f
     };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.type = CAMERA_PERSPECTIVE;
     SetTargetFPS(60);
-    Vector3 origin {0,0,0};
     int cubecount = 0;
     Vector3 pos;
     int x,y,z;
     while(!WindowShouldClose()) {
+        
         BeginDrawing();
         ClearBackground(BLACK);
         BeginMode3D(camera);
@@ -62,7 +62,7 @@ int main() {
         for (x=0;x<matrix_size; x++) {
             for (y=0; y<matrix_size; y++) {
                 for (z=0;z<matrix_size; z++) {
-                    if (test.get_substrate()[z][y][x]) {
+                    if (test.get_cell(x,y,z)) {
                         test.count_neightbors(x,y,z);
 
                         pos.y = (float) y - ((float)matrix_size)/2.0;
@@ -75,7 +75,8 @@ int main() {
                 }
             }
         }
-
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        test.evolve();
         // for (auto coord : to_be_rendered) {
 
         //     pos.y = (float) coord.second - ((float)matrix_size)/2.0;
