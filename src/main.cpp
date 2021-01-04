@@ -1,93 +1,76 @@
 #include "raylib.h"
 #include <iostream>
 #include <vector>
-#include <list>
+// #include <list>
 #include <thread>
 #include <chrono>
 #include "CellMatrix.h"
 using namespace std;
 // using namespace std::chrono_literals;
 int main() {
+    bool input_validation = false;
+    // do {
+    //     std::cout << "Enter a matrix size"
+    // } while(!input_validation);
+    
     // matrix indexing is [y][x]
-    int matrix_size = 10;
-    // cin >> matrix_size;
-    vector<vector<bool>> matrix (matrix_size, vector<bool>(matrix_size, false));
-    list<pair<unsigned int, unsigned int>> to_be_rendered {
-        make_pair(0,0),
-        
-    };
-    // lmao
-    // vector<vector<vector<bool > > >  matrix;
-
-
-    CellMatrix test(10);
-    test.set(0,0,1,true);
-    test.set(0,1,1,true);
-    test.set(1,0,1,true);
-
-    matrix[0][1] = true;
-    // for (auto vec : matrix) {
-    //     for (auto i : vec) {
-    //         std::cout << i << " ";
-    //     }
-    //     std::cout << "\n";
-    // }
+    const int matrix_size = 10;
+ 
+    CellMatrix world(matrix_size);
+    world.set(0,1,2,true);
+    world.set(0,1,1,true);
+    world.set(0,0,1,true);
 
     InitWindow(1080,920,"Cellular automaton");
     Vector3 origin {0,0,0};
     Camera3D camera = { 0 };
     camera.position = (Vector3) {
-        10.0f, 10.0f, 20.0f
-    };  // Camera position
-    camera.target = origin;    // Camera looking at point
+        10.0f, 10.0f,  (float)matrix_size * 2.0
+    };  
+    camera.target = origin;   
     camera.up = (Vector3) {
         0.0f, 1.0f, 0.0f
-    };          // Camera up vector (rotation towards target)
-    camera.fovy = 45.0f;                                // Camera field-of-view Y
+    };          
+    camera.fovy = 45.0f;                                
     camera.type = CAMERA_PERSPECTIVE;
     SetTargetFPS(60);
+
     int cubecount = 0;
     Vector3 pos;
     int x,y,z;
+    // Color blorange {255,0,0,120};
+    Color transparent_red{255,0,0,200};
     while(!WindowShouldClose()) {
         
         BeginDrawing();
         ClearBackground(BLACK);
         BeginMode3D(camera);
         DrawCubeWires(origin, matrix_size+1, matrix_size+1, matrix_size+1, RAYWHITE);
-        // DrawCube(Vector3{-matrix_size/2,-matrix_size/2,0},1,1,1,RED);
 
-        // for (vector<)
-
+        //Iterate through every cell
         for (x=0;x<matrix_size; x++) {
             for (y=0; y<matrix_size; y++) {
                 for (z=0;z<matrix_size; z++) {
-                    if (test.get_cell(x,y,z)) {
-                        test.count_neightbors(x,y,z);
+                    if (world.get_cell(x,y,z)) {
+                        world.count_neightbors(x,y,z);
 
                         pos.y = (float) y - ((float)matrix_size)/2.0;
                         pos.x = (float) x - ((float)matrix_size)/2.0;
                         pos.z = (float) z - ((float)matrix_size)/2.0;
                         
-                        DrawCube(pos,1,1,1,RED);
+                        DrawCube(pos,1,1,1, transparent_red);
                         DrawCubeWires(pos,1,1,1,BLACK);
                     }
                 }
             }
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        test.evolve();
-        // for (auto coord : to_be_rendered) {
 
-        //     pos.y = (float) coord.second - ((float)matrix_size)/2.0;
-        //     pos.x = (float) coord.first - ((float)matrix_size)/2.0;
-        //     pos.z = 0;
-        //     DrawCube(pos,1,1,1,RED);
-        //     DrawCubeWires(pos,1,1,1,BLACK);
-        // }
+        world.evolve();
+
         EndMode3D();
 
-        DrawFPS(10, 10);
+        // DrawFPS(10, 10);
         // DrawText("Cell matrix",10,20,10,GREEN);
         EndDrawing();
     }
