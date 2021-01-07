@@ -90,7 +90,7 @@ void CellMatrix::evolve() {
             for (z=0; z<size; z++) {
                 neightbors = count_neightbors(x,y,z);
                 // RULE
-                if (neightbors < 2 || neightbors >= 5) {
+                if (neightbors < 2 || neightbors > 10) {
                     beta[z][y][x] = false;
                 } else {
                     beta[z][y][x] = true;
