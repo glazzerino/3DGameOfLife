@@ -13,14 +13,23 @@ public:
     // void spin();
     bool get_cell(uint x, uint y, uint z);
     uint get_size();
+    
+    void set_survival_edge(uint n);
+    uint get_survival_edge();
+
+    void set_birth_edge(uint n);
+    uint get_birth_edge();
+
     inline uint count_neightbors(uint x,uint y,uint z);
     void evolve();
 
 private:
     uint size;
-    std::vector<std::vector<std::vector<bool>>>* current_world;
-    std::vector<std::vector<std::vector<bool>>>* next_world;
+
     std::vector<std::vector<std::vector<bool>>> alpha, beta;
+    // Default ranges for rule enforcement
+    uint birth_edge = 2;
+    uint survival_edge = 5;
     bool mat_turn;
 };
 
@@ -39,9 +48,7 @@ CellMatrix::CellMatrix(uint size) : alpha(
     ),
     mat_turn(false) {
     this->size = size;
-    // current_world = &alpha;
-    // next_world = &beta;
-    // substrate
+
 }
 
 inline uint CellMatrix::count_neightbors(uint x,uint y,uint z) {
@@ -90,7 +97,7 @@ void CellMatrix::evolve() {
             for (z=0; z<size; z++) {
                 neightbors = count_neightbors(x,y,z);
                 // RULE
-                if (neightbors < 2 || neightbors > 10) {
+                if (neightbors < birth_edge || neightbors > survival_edge) {
                     beta[z][y][x] = false;
                 } else {
                     beta[z][y][x] = true;
@@ -99,5 +106,14 @@ void CellMatrix::evolve() {
             }
         }
     }
+    
     std::swap(alpha,beta);
+}
+
+void CellMatrix::set_survival_edge(uint n) {
+    //Moore neighborhood of a cube allows for 26 neighbors tops
+    if (n > 26) 
+        n = 26;
+
+    this->survival_edge = n;
 }
