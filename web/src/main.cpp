@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <thread>
-// #include <chrono>
+#include <chrono>
 #include "CellMatrix.h"
 
 #define MAX_INPUT_SIZE_DIGITS 2
@@ -13,7 +13,6 @@ enum STATES {
     EXECUTE,
 };
 
-//THIS FUNCTION IS INTENDED TO BE USED INSIDE A DRAWING CODE BLOCK
 inline int input_box(Rectangle rec, const char *message, std::string &buffer) {
     char keypress;
     int input = 0;
@@ -22,7 +21,7 @@ inline int input_box(Rectangle rec, const char *message, std::string &buffer) {
     DrawText(buffer.c_str(), rec.x+10, rec.y+5,40,RAYWHITE);
 
     DrawText(message,
-             rec.x-(sizeof(message) * 30), rec.y-25,20, RAYWHITE);
+             rec.x-210, rec.y-25,20, RAYWHITE);
 
     if (CheckCollisionPointRec(GetMousePosition(), rec)) {
         keypress = GetCharPressed();
@@ -102,7 +101,7 @@ int main() {
         case STATES::GET_INPUT: {
 
             input_box(birthbox, "Enter max num of neightbors required to become alive", birth_range_input);
-            input_box(survivalbox, "Enter max number of neightbors a cell can have", survival_range_input);
+            input_box(survivalbox, "Enter max number a living cell can have", survival_range_input);
 
             if (CheckCollisionPointRec(GetMousePosition(), start_button)) {
                 
@@ -154,7 +153,7 @@ int main() {
                 }
             }
             ticks++;
-            if (ticks % 40 == 0) {
+            if (ticks % 20 == 0) {
 
                 world.evolve();
                 ticks = 0;

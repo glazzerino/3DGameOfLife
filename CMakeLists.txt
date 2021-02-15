@@ -6,5 +6,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(PROJECT_NAME gameoflife)
 
 LINK_DIRECTORIES(${src/})
-link_libraries(raylib GL m pthread ldl)
+link_libraries(raylib GL m pthread dl)
 add_executable(gameoflife src/main.cpp)
