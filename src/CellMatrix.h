@@ -52,7 +52,7 @@ CellMatrix::CellMatrix(uint size) : alpha(
 }
 
 inline uint CellMatrix::count_neightbors(uint x,uint y,uint z) {
-    uint neightbors = 0;
+    int neightbors = 0;
     for (int xi=-1; xi<2; xi++) {
         for (int yi=-1; yi<2; yi++) {
             for (int zi=-1; zi<2; zi++) {
@@ -116,4 +116,18 @@ void CellMatrix::set_survival_edge(uint n) {
         n = 26;
 
     this->survival_edge = n;
+}
+
+void CellMatrix::set_birth_edge(uint n) {
+    if (n>26)
+        n=26;
+    this->birth_edge = n;
+}
+
+uint CellMatrix::get_survival_edge() {
+    return this->survival_edge;
+}
+
+uint CellMatrix::get_birth_edge() {
+    return this->birth_edge;
 }
