@@ -106,9 +106,8 @@ void CellMatrix::evolve() {
             }
         }
     }
-// HOLA X2
-
-    // Hola    
+    
+    std::swap(alpha,beta);
 }
 
 void CellMatrix::set_survival_edge(uint n) {
